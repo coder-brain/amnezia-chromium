@@ -1,4 +1,5 @@
 FROM ubuntu:22.04
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime & GUI dependencies
@@ -31,11 +32,10 @@ RUN apt-get update && apt-get install -y \
 
 
 
-#COPY cache/AmneziaVPN_4.8.9.2_linux_x64.tar.zip /tmp/amnezia.tar.zip
-
+ COPY cache/AmneziaVPN_4.8.9.2_linux_x64.tar.zip /tmp/amnezia.tar.zip
 # Download and extract installer
-RUN curl -L -o /tmp/amnezia.tar.zip \
-    https://github.com/amnezia-vpn/amnezia-client/releases/download/4.8.9.2/AmneziaVPN_4.8.9.2_linux_x64.tar.zip
+# RUN curl -L -o /tmp/amnezia.tar.zip \
+#    # https://github.com/amnezia-vpn/amnezia-client/releases/download/4.8.9.2/AmneziaVPN_4.8.9.2_linux_x64.tar.zip
 
 RUN unzip /tmp/amnezia.tar.zip -d /tmp \
     && tar -xf /tmp/AmneziaVPN_Linux_Installer.tar -C /tmp \

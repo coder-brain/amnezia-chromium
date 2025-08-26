@@ -1,10 +1,14 @@
 services:
   amnezia:
-    build: ./amnezia
-    image: amnezia-client:latest
+    build:
+      context: ./amnezia
+    image: amnezia-client:slkjdfsafkjsa
     container_name: amnezia
     cap_add:
       - NET_ADMIN
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
     devices:
       - /dev/net/tun
     volumes:
@@ -12,21 +16,37 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
 
       # Mount your real Amnezia configs into container's home
-      - /home/vi/.config/AmneziaVPN.ORG:/root/.config/AmneziaVPN.ORG
+      - /home/vi/.config/AmneziaVPN.ORG:/root/.config/AmneziaVPN.ORG:ro
 
     environment:
       - DISPLAY=${DISPLAY}
-    restart: unless-stopped
+    #restart: unless-stopped
 
   chrome:
-    build: ./chromium   # directory with Dockerfile below
-    image: chromium:kek-bek
+    build:
+      context: ./chromium   # directory with Dockerfile below
+      args:
+        UID: ${UID}
+        GID: ${GID}
+    image: chromium:ewkfjlkdsafjlkj
     container_name: chrome
     network_mode: "service:amnezia"  # 🔑 force Chrome into VPN namespace
     shm_size: 2g
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./chromium/data:/root/.config/chromium  # Volume for storing Chromium user data
+      # 🔊 Pulse (pipewire-pulse) socket & runtime dir
+      - /run/user/${UID}/pulse:/run/user/${UID}/pulse
+      # 🔐 Pulse cookie for auth (host → container). Adjust host path if your user isn’t vi
+      - /home/vi/.config/pulse/cookie:/home/chromium/.config/pulse/cookie:ro
+      - ./chromium/data:/home/chromium/.config/chromium  # Volume for storing Chromium user data
+    devices:
+      - /dev/snd
+    user: "${UID}:${GID}"
+    # Matching your user’s groups helps with devices like /dev/snd (optional if using Pulse socket)
+    group_add:
+      - audio
+      - video
     environment:
       - DISPLAY=${DISPLAY}
-    restart: unless-stopped
+      - PULSE_SERVER=unix:/run/user/${UID}/pulse/native
+    #restart: unless-stopped
