@@ -1,0 +1,32 @@
+services:
+  amnezia:
+    build: ./amnezia
+    image: amnezia-client:latest
+    container_name: amnezia
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      # Forward X11 socket so GUI shows up on host
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+      # Mount your real Amnezia configs into container's home
+      - /home/vi/.config/AmneziaVPN.ORG:/root/.config/AmneziaVPN.ORG
+
+    environment:
+      - DISPLAY=${DISPLAY}
+    restart: unless-stopped
+
+  chrome:
+    build: ./chromium   # directory with Dockerfile below
+    image: chromium:kek-bek
+    container_name: chrome
+    network_mode: "service:amnezia"  # 🔑 force Chrome into VPN namespace
+    shm_size: 2g
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./chromium/data:/home/chrome/.config/chromium  # Volume for storing Chromium user data
+    environment:
+      - DISPLAY=${DISPLAY}
+    restart: unless-stopped
