@@ -16,7 +16,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
 
       # Mount your real Amnezia configs into container's home
-      - /home/vi/.config/AmneziaVPN.ORG:/root/.config/AmneziaVPN.ORG:ro
+      - ${HOME}/.config/AmneziaVPN.ORG:/root/.config/AmneziaVPN.ORG:ro
 
     environment:
       - DISPLAY=${DISPLAY}
@@ -37,7 +37,7 @@ services:
       # 🔊 Pulse (pipewire-pulse) socket & runtime dir
       - /run/user/${UID}/pulse:/run/user/${UID}/pulse
       # 🔐 Pulse cookie for auth (host → container). Adjust host path if your user isn’t vi
-      - /home/vi/.config/pulse/cookie:/home/chromium/.config/pulse/cookie:ro
+      - ${HOME}/.config/pulse/cookie:/home/chromium/.config/pulse/cookie:ro
       - ./chromium/data:/home/chromium/.config/chromium  # Volume for storing Chromium user data
     devices:
       - /dev/snd
