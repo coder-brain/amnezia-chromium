@@ -1,6 +1,7 @@
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV XRAY_VERSION=1.8.6
 
 # Install runtime & GUI dependencies
 RUN apt-get update && apt-get install -y \
@@ -27,8 +28,14 @@ RUN apt-get update && apt-get install -y \
     libqt6core6 libqt6gui6 libqt6widgets6 \
     libqt6qml6 libqt6network6 libqt6dbus6 \
     libqt6quick6 libqt6quickcontrols2-6 \
-    libqt6core5compat6 libqt6remoteobjects6 \
-    && rm -rf /var/lib/apt/lists/*
+    libqt6core5compat6 libqt6remoteobjects6
+RUN curl -L -o /tmp/xray.zip https://github.com/XTLS/Xray-core/releases/download/v${XRAY_VERSION}/Xray-linux-64.zip \
+    && mkdir -p /usr/local/bin/xray \
+    && unzip /tmp/xray.zip -d /usr/local/bin/xray \
+    && rm /tmp/xray.zip \
+    && chmod +x /usr/local/bin/xray/xray
+ENV PATH="/usr/local/bin/xray:$PATH"
+RUN rm -rf /var/lib/apt/lists/*
 
 
 
