@@ -41,6 +41,9 @@ services:
       - ./chromium/data:/home/chromium/.config/chromium  # Volume for storing Chromium user data
     devices:
       - /dev/snd
+      - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video1
+      - /dev/dri:/dev/dri          # 🎨 GPU acceleration
     user: "${UID}:${GID}"
     # Matching your user’s groups helps with devices like /dev/snd (optional if using Pulse socket)
     group_add:
