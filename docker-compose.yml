@@ -6,6 +6,7 @@ services:
     container_name: amnezia
     cap_add:
       - NET_ADMIN
+      - SYS_ADMIN
     dns:
       - 1.1.1.1
       - 1.0.0.1
